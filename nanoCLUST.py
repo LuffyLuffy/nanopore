@@ -60,8 +60,13 @@ def usage():
 	awk -v k="Sample1" '/^>/{gsub(">","",$0);$0=">barcodelabel="k";"$0}1' Sample1.fa > Sample1_barcode.fa
 	awk -v k="Sample2" '/^>/{gsub(">","",$0);$0=">barcodelabel="k";"$0}1' Sample2.fa > Sample2_barcode.fa
 	awk -v k="Sample3" '/^>/{gsub(">","",$0);$0=">barcodelabel="k";"$0}1' Sample3.fa > Sample3_barcode.fa
-
+        convert fastq to fa
+	#ls *.fastq | awk -F_ '{print "mv "$0" " $1".fastq"}' | bash
+	ls *.fastq | awk -F"." '{print "seqkit fq2fa "$0  " >"$1".fa -w 0 "}' | bash
+        clean the head of fasta file, remove redundant tail 
+	for i in `ls *.fa | awk -F. '{print $1}'`;do awk -v k=$i '/^>/{gsub(">","",$0);$0=">barcodelabel="k";"$1}1' $i.fa > $i\_barcode.fa;done
 	cat *_barcode.fa > multiplexed.fa
+	python nanoCLUST.py  -i  multiplexed.fa 
 
 	'''
 
